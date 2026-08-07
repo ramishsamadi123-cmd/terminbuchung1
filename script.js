@@ -2,12 +2,10 @@ const SERVICE_ID = "service_f0cj3ma";
 const TEMPLATE_ID = "template_fn6162c";
 const PUBLIC_KEY = "cGaK4PxeTXRhKD-FB";
 
-// EMAILJS STARTEN
 emailjs.init({
   publicKey: PUBLIC_KEY
 });
 
-// ELEMENTE
 const form = document.getElementById("terminForm");
 const statusText = document.getElementById("status");
 const sendenButton = document.getElementById("sendenButton");
@@ -22,11 +20,6 @@ const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 
 const timeButtons = document.querySelectorAll(".time-btn");
-
-
-// ==========================
-// KALENDER
-// ==========================
 
 let calendarDate = new Date();
 let selectedDate = null;
@@ -46,22 +39,18 @@ const monthNames = [
   "Dezember"
 ];
 
-
 function renderCalendar() {
-
   calendarDays.innerHTML = "";
 
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
 
-  calendarTitle.textContent =
-    `${monthNames[month]} ${year}`;
+  calendarTitle.textContent = `${monthNames[month]} ${year}`;
 
   const firstDay = new Date(year, month, 1);
 
   let startDay = firstDay.getDay();
 
-  // Sonntag von 0 auf 7 setzen
   if (startDay === 0) {
     startDay = 7;
   }
@@ -69,12 +58,8 @@ function renderCalendar() {
   const daysInMonth =
     new Date(year, month + 1, 0).getDate();
 
-
-  // Leere Felder vor dem ersten Tag
   for (let i = 1; i < startDay; i++) {
-
-    const empty =
-      document.createElement("div");
+    const empty = document.createElement("div");
 
     empty.classList.add(
       "calendar-day",
@@ -84,48 +69,31 @@ function renderCalendar() {
     calendarDays.appendChild(empty);
   }
 
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-
-  // Tage erstellen
   for (let day = 1; day <= daysInMonth; day++) {
-
-    const dayElement =
-      document.createElement("div");
+    const dayElement = document.createElement("div");
 
     dayElement.classList.add("calendar-day");
-
     dayElement.textContent = day;
 
-
-    const thisDate =
-      new Date(year, month, day);
-
+    const thisDate = new Date(year, month, day);
     thisDate.setHours(0, 0, 0, 0);
 
-
-    // Vergangene Tage sperren
     if (thisDate < today) {
-
       dayElement.classList.add("disabled");
-
     } else {
-
       dayElement.addEventListener("click", () => {
-
         document
           .querySelectorAll(".calendar-day")
           .forEach((element) => {
             element.classList.remove("selected");
           });
 
-
         dayElement.classList.add("selected");
 
         selectedDate = thisDate;
-
 
         const formattedDate =
           `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -134,15 +102,11 @@ function renderCalendar() {
       });
     }
 
-
     calendarDays.appendChild(dayElement);
   }
 }
 
-
-// Vorheriger Monat
 prevMonthButton.addEventListener("click", () => {
-
   calendarDate.setMonth(
     calendarDate.getMonth() - 1
   );
@@ -150,10 +114,7 @@ prevMonthButton.addEventListener("click", () => {
   renderCalendar();
 });
 
-
-// Nächster Monat
 nextMonthButton.addEventListener("click", () => {
-
   calendarDate.setMonth(
     calendarDate.getMonth() + 1
   );
@@ -161,43 +122,24 @@ nextMonthButton.addEventListener("click", () => {
   renderCalendar();
 });
 
-
-// Kalender beim Start anzeigen
 renderCalendar();
 
-
-// ==========================
-// UHRZEIT
-// ==========================
-
 timeButtons.forEach((button) => {
-
   button.addEventListener("click", () => {
-
     timeButtons.forEach((btn) => {
       btn.classList.remove("selected");
     });
 
     button.classList.add("selected");
 
-    uhrzeitInput.value =
-      button.dataset.time;
+    uhrzeitInput.value = button.dataset.time;
   });
 });
 
-
-// ==========================
-// FORMULAR ABSENDEN
-// ==========================
-
 form.addEventListener("submit", async (event) => {
-
   event.preventDefault();
 
-
-  // Datum prüfen
   if (!datumInput.value) {
-
     statusText.textContent =
       "❌ Bitte wähle ein Datum aus.";
 
@@ -206,10 +148,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-
-  // Uhrzeit prüfen
   if (!uhrzeitInput.value) {
-
     statusText.textContent =
       "❌ Bitte wähle eine Uhrzeit aus.";
 
@@ -218,33 +157,22 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-
   statusText.textContent =
     "Termin wird gesendet...";
 
   statusText.style.color = "#94a3b8";
 
   sendenButton.disabled = true;
-
-  sendenButton.textContent =
-    "Wird gesendet...";
-
+  sendenButton.textContent = "Wird gesendet...";
 
   const templateParams = {
-
     to_email: "ramishsamadi123@gmail.com",
 
     name:
-      document
-        .getElementById("name")
-        .value
-        .trim(),
+      document.getElementById("name").value.trim(),
 
     email:
-      document
-        .getElementById("email")
-        .value
-        .trim(),
+      document.getElementById("email").value.trim(),
 
     datum:
       datumInput.value,
@@ -253,42 +181,30 @@ form.addEventListener("submit", async (event) => {
       uhrzeitInput.value,
 
     nachricht:
-      document
-        .getElementById("nachricht")
-        .value
-        .trim() || "Keine Nachricht"
+      document.getElementById("nachricht").value.trim()
+      || "Keine Nachricht"
   };
 
-
   try {
-
     await emailjs.send(
       SERVICE_ID,
       TEMPLATE_ID,
       templateParams
     );
 
-
     statusText.textContent =
       "✅ Termin wurde erfolgreich gebucht.";
 
-    statusText.style.color =
-      "#22c55e";
+    statusText.style.color = "#22c55e";
 
-
-    // Formular zurücksetzen
     form.reset();
 
-
-    // Uhrzeit zurücksetzen
     timeButtons.forEach((btn) => {
       btn.classList.remove("selected");
     });
 
     uhrzeitInput.value = "";
 
-
-    // Kalender zurücksetzen
     document
       .querySelectorAll(".calendar-day")
       .forEach((day) => {
@@ -296,29 +212,18 @@ form.addEventListener("submit", async (event) => {
       });
 
     datumInput.value = "";
-
     selectedDate = null;
 
-
   } catch (error) {
-
-    console.error(
-      "EmailJS-Fehler:",
-      error
-    );
+    console.error("EmailJS-Fehler:", error);
 
     statusText.textContent =
       "❌ Termin konnte nicht gesendet werden.";
 
-    statusText.style.color =
-      "#ef4444";
+    statusText.style.color = "#ef4444";
 
   } finally {
-
     sendenButton.disabled = false;
-
-    sendenButton.textContent =
-      "✓ Termin buchen";
+    sendenButton.textContent = "✓ Termin buchen";
   }
-
 });
