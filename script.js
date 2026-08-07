@@ -271,22 +271,32 @@ form.addEventListener("submit", async (event) => {
       "#15803d";
 
 
-    // FORMULAR LEEREN
+    /
 
-    form.reset();
-    timeButtons.forEach((btn) => {
+// FORMULAR LEEREN
+form.reset();
+
+// Uhrzeit-Auswahl zurücksetzen
+timeButtons.forEach((btn) => {
   btn.classList.remove("selected");
 });
 
 uhrzeitInput.value = "";
 
+// Kalender-Auswahl zurücksetzen
+document
+  .querySelectorAll(".calendar-day")
+  .forEach((day) => {
+    day.classList.remove("selected");
+  });
 
-    // DATUMSGRENZE ERNEUT SETZEN
+selectedDate = null;
 
-    datumInput.min =
-      new Date()
-        .toISOString()
-        .split("T")[0];
+// Datumsgrenze erneut setzen
+datumInput.min =
+  new Date()
+    .toISOString()
+    .split("T")[0];
 
 
   } catch (error) {
