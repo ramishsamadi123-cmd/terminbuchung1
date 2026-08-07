@@ -7,8 +7,10 @@
 
   <title>Termin mit Ramish</title>
 
+  <!-- Design -->
   <link rel="stylesheet" href="style.css">
 
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 
@@ -26,14 +28,17 @@
 
       <!-- DATUM -->
       <label for="datum">Datum</label>
-      <input type="date" id="datum" required>
+      <input
+        type="date"
+        id="datum"
+        required
+      >
 
 
       <!-- UHRZEIT -->
       <label for="uhrzeit">Uhrzeit</label>
 
       <select id="uhrzeit" required>
-
         <option value="">Bitte auswählen</option>
 
         <option value="08:00">08:00</option>
@@ -51,12 +56,12 @@
         <option value="20:00">20:00</option>
         <option value="21:00">21:00</option>
         <option value="22:00">22:00</option>
-
       </select>
 
 
       <!-- NAME -->
       <label for="name">Name</label>
+
       <input
         type="text"
         id="name"
@@ -67,6 +72,7 @@
 
       <!-- EMAIL -->
       <label for="email">E-Mail</label>
+
       <input
         type="email"
         id="email"
@@ -85,13 +91,13 @@
       ></textarea>
 
 
-      <!-- BUTTON -->
+      <!-- ABSENDEN -->
       <button type="submit" id="sendenButton">
         Termin senden
       </button>
 
 
-      <!-- STATUS -->
+      <!-- STATUSMELDUNG -->
       <p id="status" aria-live="polite"></p>
 
     </form>
@@ -99,6 +105,7 @@
   </main>
 
 
+  <!-- JavaScript -->
   <script src="script.js"></script>
 
 </body>
