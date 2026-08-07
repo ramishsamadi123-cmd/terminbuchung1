@@ -88,12 +88,28 @@ function renderCalendar() {
       dayElement.classList.add("disabled");
     } else {
       dayElement.addEventListener("click", () => {
+
+        // Wenn derselbe Tag nochmal geklickt wird → abwählen
+        if (dayElement.classList.contains("selected")) {
+          dayElement.classList.remove("selected");
+
+          selectedDate = null;
+          datumInput.value = "";
+
+          summaryDate.textContent =
+            "Noch kein Datum gewählt";
+
+          return;
+        }
+
+        // Andere Auswahl entfernen
         document
           .querySelectorAll(".calendar-day")
           .forEach((element) => {
             element.classList.remove("selected");
           });
 
+        // Neuen Tag auswählen
         dayElement.classList.add("selected");
 
         selectedDate = thisDate;
@@ -137,10 +153,25 @@ renderCalendar();
 
 timeButtons.forEach((button) => {
   button.addEventListener("click", () => {
+
+    // Wenn dieselbe Uhrzeit nochmal geklickt wird → abwählen
+    if (button.classList.contains("selected")) {
+      button.classList.remove("selected");
+
+      uhrzeitInput.value = "";
+
+      summaryTime.textContent =
+        "Noch keine Uhrzeit gewählt";
+
+      return;
+    }
+
+    // Andere Uhrzeit abwählen
     timeButtons.forEach((btn) => {
       btn.classList.remove("selected");
     });
 
+    // Neue Uhrzeit auswählen
     button.classList.add("selected");
 
     uhrzeitInput.value = button.dataset.time;
@@ -177,16 +208,23 @@ form.addEventListener("submit", async (event) => {
   statusText.style.color = "#94a3b8";
 
   sendenButton.disabled = true;
-  sendenButton.textContent = "Wird gesendet...";
+  sendenButton.textContent =
+    "Wird gesendet...";
 
   const templateParams = {
     to_email: "ramishsamadi123@gmail.com",
 
     name:
-      document.getElementById("name").value.trim(),
+      document
+        .getElementById("name")
+        .value
+        .trim(),
 
     email:
-      document.getElementById("email").value.trim(),
+      document
+        .getElementById("email")
+        .value
+        .trim(),
 
     datum:
       datumInput.value,
@@ -195,8 +233,11 @@ form.addEventListener("submit", async (event) => {
       uhrzeitInput.value,
 
     nachricht:
-      document.getElementById("nachricht").value.trim()
-      || "Keine Nachricht"
+      document
+        .getElementById("nachricht")
+        .value
+        .trim()
+        || "Keine Nachricht"
   };
 
   try {
@@ -209,7 +250,8 @@ form.addEventListener("submit", async (event) => {
     statusText.textContent =
       "✅ Termin wurde erfolgreich gebucht.";
 
-    statusText.style.color = "#22c55e";
+    statusText.style.color =
+      "#22c55e";
 
     form.reset();
 
@@ -235,15 +277,21 @@ form.addEventListener("submit", async (event) => {
       "Noch keine Uhrzeit gewählt";
 
   } catch (error) {
-    console.error("EmailJS-Fehler:", error);
+    console.error(
+      "EmailJS-Fehler:",
+      error
+    );
 
     statusText.textContent =
       "❌ Termin konnte nicht gesendet werden.";
 
-    statusText.style.color = "#ef4444";
+    statusText.style.color =
+      "#ef4444";
 
   } finally {
     sendenButton.disabled = false;
-    sendenButton.textContent = "✓ Termin buchen";
+
+    sendenButton.textContent =
+      "✓ Termin buchen";
   }
 });
