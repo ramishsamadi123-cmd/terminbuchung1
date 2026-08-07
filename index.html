@@ -28,14 +28,44 @@
 
     <form id="terminForm">
 
-     <div class="termin-bereich">
+    <div class="termin-bereich">
 
-  <h2>Termin auswählen</h2>
+  <h2>
+    <span class="step-number">1</span>
+    Datum wählen
+  </h2>
 
-  <label for="datum">📅 Datum</label>
-  <input type="date" id="datum" required>
+  <div class="calendar">
 
-  <label for="uhrzeit">🕒 Uhrzeit</label>
+    <div class="calendar-header">
+      <button type="button" id="prevMonth" class="calendar-arrow">‹</button>
+
+      <div id="calendarTitle"></div>
+
+      <button type="button" id="nextMonth" class="calendar-arrow">›</button>
+    </div>
+
+    <div class="calendar-weekdays">
+      <span>Mo</span>
+      <span>Di</span>
+      <span>Mi</span>
+      <span>Do</span>
+      <span>Fr</span>
+      <span>Sa</span>
+      <span>So</span>
+    </div>
+
+    <div id="calendarDays" class="calendar-days"></div>
+
+  </div>
+
+  <input type="hidden" id="datum" required>
+
+  <h2 class="time-title">
+    <span class="step-number">2</span>
+    Uhrzeit wählen
+  </h2>
+
   <select id="uhrzeit" required>
     <option value="">Bitte auswählen</option>
     <option value="08:00">08:00</option>
