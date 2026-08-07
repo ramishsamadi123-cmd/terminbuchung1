@@ -5,30 +5,55 @@ const PUBLIC_KEY = "cGaK4PxeTXRhKD-FB";
 const GOOGLE_CALENDAR_URL =
   "https://script.google.com/macros/s/AKfycbzGYc3lKw4HkZ6oaMmeDZz_s1f07QWl2Wjty1WKTv-5x4FI-Vj_1vribm3FBvvmPbsv/exec";
 
+const GOOGLE_AVAILABILITY_URL =
+  "https://script.google.com/macros/s/AKfycbzGYc3lKw4HkZ6oaMmeDZz_s1f07QWl2Wjty1WKTv-5x4FI-Vj_1vribm3FBvvmPbsv/exec";
+
+
 emailjs.init({
   publicKey: PUBLIC_KEY
 });
 
-const form = document.getElementById("terminForm");
-const statusText = document.getElementById("status");
-const sendenButton = document.getElementById("sendenButton");
 
-const datumInput = document.getElementById("datum");
-const uhrzeitInput = document.getElementById("uhrzeit");
+const form =
+  document.getElementById("terminForm");
 
-const calendarTitle = document.getElementById("calendarTitle");
-const calendarDays = document.getElementById("calendarDays");
+const statusText =
+  document.getElementById("status");
 
-const prevMonthButton = document.getElementById("prevMonth");
-const nextMonthButton = document.getElementById("nextMonth");
+const sendenButton =
+  document.getElementById("sendenButton");
 
-const timeButtons = document.querySelectorAll(".time-btn");
+const datumInput =
+  document.getElementById("datum");
 
-const summaryDate = document.getElementById("summaryDate");
-const summaryTime = document.getElementById("summaryTime");
+const uhrzeitInput =
+  document.getElementById("uhrzeit");
+
+const calendarTitle =
+  document.getElementById("calendarTitle");
+
+const calendarDays =
+  document.getElementById("calendarDays");
+
+const prevMonthButton =
+  document.getElementById("prevMonth");
+
+const nextMonthButton =
+  document.getElementById("nextMonth");
+
+const timeButtons =
+  document.querySelectorAll(".time-btn");
+
+const summaryDate =
+  document.getElementById("summaryDate");
+
+const summaryTime =
+  document.getElementById("summaryTime");
+
 
 let calendarDate = new Date();
 let selectedDate = null;
+
 
 const monthNames = [
   "Januar",
@@ -47,28 +72,188 @@ const monthNames = [
 
 
 // ========================================
-// KALENDER ANZEIGEN
+// BELEGTE UHRZEITEN LADEN
+// ========================================
+
+async function ladeBelegteZeiten(datum) {
+
+  try {
+
+    const callbackName =
+      "bookingCallback_" + Date.now();
+
+
+    return await new Promise((resolve, reject) => {
+
+      const script =
+        document.createElement("script");
+
+
+      window[callbackName] = (data) => {
+
+        delete window[callbackName];
+
+        script.remove();
+
+        resolve(
+          data.belegt || []
+        );
+      };
+
+
+      script.src =
+        `${GOOGLE_AVAILABILITY_URL}?datum=${encodeURIComponent(datum)}&callback=${callbackName}`;
+
+
+      script.onerror = () => {
+
+        delete window[callbackName];
+
+        script.remove();
+
+        reject(
+          new Error(
+            "Belegte Zeiten konnten nicht geladen werden."
+          )
+        );
+      };
+
+
+      document.body.appendChild(script);
+
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Fehler beim Laden belegter Zeiten:",
+      error
+    );
+
+    return [];
+  }
+}
+
+
+// ========================================
+// UHRZEITEN ZURÜCKSETZEN
+// ========================================
+
+function resetTimeButtons() {
+
+  timeButtons.forEach((button) => {
+
+    button.disabled = false;
+
+    button.classList.remove(
+      "selected",
+      "booked"
+    );
+
+  });
+
+
+  uhrzeitInput.value = "";
+
+  summaryTime.textContent =
+    "Noch keine Uhrzeit gewählt";
+}
+
+
+// ========================================
+// BELEGTE UHRZEITEN ANZEIGEN
+// ========================================
+
+async function aktualisiereUhrzeiten(datum) {
+
+  // Während des Ladens
+  timeButtons.forEach((button) => {
+
+    button.disabled = true;
+
+    button.classList.remove(
+      "selected",
+      "booked"
+    );
+
+  });
+
+
+  uhrzeitInput.value = "";
+
+  summaryTime.textContent =
+    "Verfügbare Uhrzeiten werden geladen...";
+
+
+  const belegteZeiten =
+    await ladeBelegteZeiten(datum);
+
+
+  timeButtons.forEach((button) => {
+
+    const zeit =
+      button.dataset.time;
+
+
+    if (belegteZeiten.includes(zeit)) {
+
+      button.disabled = true;
+
+      button.classList.add("booked");
+
+    } else {
+
+      button.disabled = false;
+
+      button.classList.remove("booked");
+
+    }
+
+  });
+
+
+  summaryTime.textContent =
+    "Noch keine Uhrzeit gewählt";
+}
+
+
+// ========================================
+// KALENDER
 // ========================================
 
 function renderCalendar() {
 
   calendarDays.innerHTML = "";
 
-  const year = calendarDate.getFullYear();
-  const month = calendarDate.getMonth();
+
+  const year =
+    calendarDate.getFullYear();
+
+  const month =
+    calendarDate.getMonth();
+
 
   calendarTitle.textContent =
     `${monthNames[month]} ${year}`;
 
+
   const firstDay =
-    new Date(year, month, 1);
+    new Date(
+      year,
+      month,
+      1
+    );
+
 
   let startDay =
     firstDay.getDay();
 
+
   if (startDay === 0) {
     startDay = 7;
   }
+
 
   const daysInMonth =
     new Date(
@@ -78,23 +263,31 @@ function renderCalendar() {
     ).getDate();
 
 
-  // Leere Felder vor dem 1. Tag
-  for (let i = 1; i < startDay; i++) {
+  // Leere Felder vor Monatsbeginn
+  for (
+    let i = 1;
+    i < startDay;
+    i++
+  ) {
 
     const empty =
       document.createElement("div");
+
 
     empty.classList.add(
       "calendar-day",
       "empty"
     );
 
+
     calendarDays.appendChild(empty);
+
   }
 
 
-  // Heutiges Datum
-  const today = new Date();
+  const today =
+    new Date();
+
 
   today.setHours(
     0,
@@ -104,7 +297,7 @@ function renderCalendar() {
   );
 
 
-  // Tage erstellen
+  // Tage erzeugen
   for (
     let day = 1;
     day <= daysInMonth;
@@ -114,9 +307,11 @@ function renderCalendar() {
     const dayElement =
       document.createElement("div");
 
+
     dayElement.classList.add(
       "calendar-day"
     );
+
 
     dayElement.textContent =
       day;
@@ -129,6 +324,7 @@ function renderCalendar() {
         day
       );
 
+
     thisDate.setHours(
       0,
       0,
@@ -137,7 +333,7 @@ function renderCalendar() {
     );
 
 
-    // Vergangene Tage deaktivieren
+    // Vergangene Tage sperren
     if (thisDate < today) {
 
       dayElement.classList.add(
@@ -148,12 +344,12 @@ function renderCalendar() {
 
       dayElement.addEventListener(
         "click",
-        () => {
+        async () => {
 
 
-          // =================================
+          // ============================
           // GLEICHES DATUM = ABWÄHLEN
-          // =================================
+          // ============================
 
           if (
             dayElement.classList.contains(
@@ -165,12 +361,18 @@ function renderCalendar() {
               "selected"
             );
 
+
             selectedDate = null;
 
             datumInput.value = "";
 
+
             summaryDate.textContent =
               "Noch kein Datum gewählt";
+
+
+            resetTimeButtons();
+
 
             return;
           }
@@ -181,15 +383,13 @@ function renderCalendar() {
             .querySelectorAll(
               ".calendar-day"
             )
-            .forEach(
-              (element) => {
+            .forEach((element) => {
 
-                element.classList.remove(
-                  "selected"
-                );
+              element.classList.remove(
+                "selected"
+              );
 
-              }
-            );
+            });
 
 
           // Neues Datum auswählen
@@ -231,15 +431,27 @@ function renderCalendar() {
               }
             );
 
+
+          // =================================
+          // GOOGLE KALENDER PRÜFEN
+          // =================================
+
+          await aktualisiereUhrzeiten(
+            formattedDate
+          );
+
         }
       );
+
     }
 
 
     calendarDays.appendChild(
       dayElement
     );
+
   }
+
 }
 
 
@@ -254,6 +466,19 @@ prevMonthButton.addEventListener(
     calendarDate.setMonth(
       calendarDate.getMonth() - 1
     );
+
+
+    selectedDate = null;
+
+    datumInput.value = "";
+
+
+    summaryDate.textContent =
+      "Noch kein Datum gewählt";
+
+
+    resetTimeButtons();
+
 
     renderCalendar();
 
@@ -272,6 +497,19 @@ nextMonthButton.addEventListener(
     calendarDate.setMonth(
       calendarDate.getMonth() + 1
     );
+
+
+    selectedDate = null;
+
+    datumInput.value = "";
+
+
+    summaryDate.textContent =
+      "Noch kein Datum gewählt";
+
+
+    resetTimeButtons();
+
 
     renderCalendar();
 
@@ -294,9 +532,17 @@ timeButtons.forEach(
       () => {
 
 
-        // Gleiche Uhrzeit nochmal
-        // anklicken = abwählen
+        // Belegte Uhrzeit nicht auswählbar
+        if (
+          button.disabled ||
+          button.classList.contains("booked")
+        ) {
 
+          return;
+        }
+
+
+        // Gleiche Uhrzeit erneut = abwählen
         if (
           button.classList.contains(
             "selected"
@@ -307,17 +553,19 @@ timeButtons.forEach(
             "selected"
           );
 
+
           uhrzeitInput.value = "";
+
 
           summaryTime.textContent =
             "Noch keine Uhrzeit gewählt";
+
 
           return;
         }
 
 
         // Andere Uhrzeit entfernen
-
         timeButtons.forEach(
           (btn) => {
 
@@ -328,8 +576,6 @@ timeButtons.forEach(
           }
         );
 
-
-        // Neue Uhrzeit auswählen
 
         button.classList.add(
           "selected"
@@ -345,6 +591,7 @@ timeButtons.forEach(
 
       }
     );
+
   }
 );
 
@@ -360,37 +607,33 @@ form.addEventListener(
     event.preventDefault();
 
 
-    // Datum prüfen
-
     if (!datumInput.value) {
 
       statusText.textContent =
         "❌ Bitte wähle ein Datum aus.";
 
+
       statusText.style.color =
         "#ef4444";
+
 
       return;
     }
 
-
-    // Uhrzeit prüfen
 
     if (!uhrzeitInput.value) {
 
       statusText.textContent =
-        "❌ Bitte wähle eine Uhrzeit aus.";
+        "❌ Bitte wähle eine verfügbare Uhrzeit aus.";
+
 
       statusText.style.color =
         "#ef4444";
 
+
       return;
     }
 
-
-    // ====================================
-    // FORMULARDATEN
-    // ====================================
 
     const name =
       document
@@ -430,10 +673,6 @@ form.addEventListener(
       "Wird gebucht...";
 
 
-    // ====================================
-    // DATEN FÜR EMAILJS
-    // ====================================
-
     const templateParams = {
 
       to_email:
@@ -456,10 +695,6 @@ form.addEventListener(
 
     };
 
-
-    // ====================================
-    // DATEN FÜR GOOGLE KALENDER
-    // ====================================
 
     const kalenderDaten = {
 
@@ -485,7 +720,7 @@ form.addEventListener(
 
 
       // ==================================
-      // 1. GOOGLE KALENDER
+      // GOOGLE KALENDER
       // ==================================
 
       await fetch(
@@ -499,8 +734,10 @@ form.addEventListener(
             "no-cors",
 
           headers: {
+
             "Content-Type":
               "text/plain;charset=utf-8"
+
           },
 
           body:
@@ -513,7 +750,7 @@ form.addEventListener(
 
 
       // ==================================
-      // 2. E-MAIL SENDEN
+      // EMAILJS
       // ==================================
 
       await emailjs.send(
@@ -523,10 +760,6 @@ form.addEventListener(
       );
 
 
-      // ==================================
-      // ERFOLGREICH
-      // ==================================
-
       statusText.textContent =
         "✅ Termin wurde erfolgreich gebucht.";
 
@@ -535,43 +768,21 @@ form.addEventListener(
         "#22c55e";
 
 
-      // Formular leeren
-
       form.reset();
 
 
-      // Uhrzeit zurücksetzen
-
-      timeButtons.forEach(
-        (btn) => {
-
-          btn.classList.remove(
-            "selected"
-          );
-
-        }
-      );
-
-
-      uhrzeitInput.value =
-        "";
-
-
       // Datum zurücksetzen
-
       document
         .querySelectorAll(
           ".calendar-day"
         )
-        .forEach(
-          (day) => {
+        .forEach((day) => {
 
-            day.classList.remove(
-              "selected"
-            );
+          day.classList.remove(
+            "selected"
+          );
 
-          }
-        );
+        });
 
 
       datumInput.value =
@@ -582,14 +793,12 @@ form.addEventListener(
         null;
 
 
-      // Zusammenfassung zurücksetzen
-
       summaryDate.textContent =
         "Noch kein Datum gewählt";
 
 
-      summaryTime.textContent =
-        "Noch keine Uhrzeit gewählt";
+      // Uhrzeiten zurücksetzen
+      resetTimeButtons();
 
 
     } catch (error) {
