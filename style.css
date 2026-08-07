@@ -415,3 +415,41 @@ button:disabled {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+.daten-bereich {
+  margin-top: 28px;
+  padding-top: 25px;
+  border-top: 1px solid #334155;
+}
+
+.daten-bereich h2 {
+  display: flex;
+  align-items: center;
+
+  margin: 0 0 20px;
+
+  font-size: 18px;
+  color: #f8fafc;
+}
+
+.daten-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.input-group label {
+  margin-top: 0;
+}
+
+.optional {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+@media (max-width: 520px) {
+  .daten-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
