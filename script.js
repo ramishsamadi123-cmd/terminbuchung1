@@ -3,7 +3,7 @@ const TEMPLATE_ID = "template_fn6162c";
 const PUBLIC_KEY = "cGaK4PxeTXRhKD-FB";
 
 const GOOGLE_CALENDAR_URL =
-  "https://script.google.com/macros/s/AKfycbwSB8OuE0Ovm3MbQXxa5vmS_cAe-2H-Sz7U7-eOR5myqyRbtFD9hQsX4UOg4FpjLdEFcA/exec";
+  "https://script.google.com/macros/s/AKfycbzGYc3lKw4HkZ6oaMmeDZz_s1f07QWl2Wjty1WKTv-5x4FI-Vj_1vribm3FBvvmPbsv/exec";
 
 emailjs.init({
   publicKey: PUBLIC_KEY
