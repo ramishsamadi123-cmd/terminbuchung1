@@ -217,3 +217,22 @@ button:disabled {
     font-size: 27px;
   }
 }
+.header-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 28px;
+
+  background: #eff6ff;
+  border-radius: 16px;
+}
+
+h1 {
+  font-size: 30px;
+  letter-spacing: -0.5px;
+}
