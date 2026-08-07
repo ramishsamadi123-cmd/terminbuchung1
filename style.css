@@ -236,3 +236,16 @@ h1 {
   font-size: 30px;
   letter-spacing: -0.5px;
 }
+.termin-bereich {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+}
+
+.termin-bereich h2 {
+  margin: 0 0 18px;
+  font-size: 17px;
+  color: #1e293b;
+}
