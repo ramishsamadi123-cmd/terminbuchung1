@@ -6,7 +6,7 @@ const GOOGLE_CALENDAR_URL =
   "https://script.google.com/macros/s/AKfycbzGYc3lKw4HkZ6oaMmeDZz_s1f07QWl2Wjty1WKTv-5x4FI-Vj_1vribm3FBvvmPbsv/exec";
 
 const GOOGLE_AVAILABILITY_URL =
-  "https://script.google.com/macros/s/AKfycbzGYc3lKw4HkZ6oaMmeDZz_s1f07QWl2Wjty1WKTv-5x4FI-Vj_1vribm3FBvvmPbsv/exec";
+  GOOGLE_CALENDAR_URL;
 
 
 emailjs.init({
@@ -123,7 +123,6 @@ async function ladeBelegteZeiten(datum) {
 
     });
 
-
   } catch (error) {
 
     console.error(
@@ -167,7 +166,6 @@ function resetTimeButtons() {
 
 async function aktualisiereUhrzeiten(datum) {
 
-  // Während des Ladens
   timeButtons.forEach((button) => {
 
     button.disabled = true;
@@ -263,7 +261,6 @@ function renderCalendar() {
     ).getDate();
 
 
-  // Leere Felder vor Monatsbeginn
   for (
     let i = 1;
     i < startDay;
@@ -297,7 +294,6 @@ function renderCalendar() {
   );
 
 
-  // Tage erzeugen
   for (
     let day = 1;
     day <= daysInMonth;
@@ -333,7 +329,6 @@ function renderCalendar() {
     );
 
 
-    // Vergangene Tage sperren
     if (thisDate < today) {
 
       dayElement.classList.add(
@@ -347,10 +342,7 @@ function renderCalendar() {
         async () => {
 
 
-          // ============================
-          // GLEICHES DATUM = ABWÄHLEN
-          // ============================
-
+          // Gleichen Tag erneut anklicken
           if (
             dayElement.classList.contains(
               "selected"
@@ -378,7 +370,6 @@ function renderCalendar() {
           }
 
 
-          // Andere Datumsauswahl entfernen
           document
             .querySelectorAll(
               ".calendar-day"
@@ -392,7 +383,6 @@ function renderCalendar() {
             });
 
 
-          // Neues Datum auswählen
           dayElement.classList.add(
             "selected"
           );
@@ -432,10 +422,6 @@ function renderCalendar() {
             );
 
 
-          // =================================
-          // GOOGLE KALENDER PRÜFEN
-          // =================================
-
           await aktualisiereUhrzeiten(
             formattedDate
           );
@@ -456,7 +442,7 @@ function renderCalendar() {
 
 
 // ========================================
-// VORHERIGER MONAT
+// MONAT WECHSELN
 // ========================================
 
 prevMonthButton.addEventListener(
@@ -479,16 +465,11 @@ prevMonthButton.addEventListener(
 
     resetTimeButtons();
 
-
     renderCalendar();
 
   }
 );
 
-
-// ========================================
-// NÄCHSTER MONAT
-// ========================================
 
 nextMonthButton.addEventListener(
   "click",
@@ -509,7 +490,6 @@ nextMonthButton.addEventListener(
 
 
     resetTimeButtons();
-
 
     renderCalendar();
 
@@ -532,7 +512,6 @@ timeButtons.forEach(
       () => {
 
 
-        // Belegte Uhrzeit nicht auswählbar
         if (
           button.disabled ||
           button.classList.contains("booked")
@@ -542,7 +521,6 @@ timeButtons.forEach(
         }
 
 
-        // Gleiche Uhrzeit erneut = abwählen
         if (
           button.classList.contains(
             "selected"
@@ -565,7 +543,6 @@ timeButtons.forEach(
         }
 
 
-        // Andere Uhrzeit entfernen
         timeButtons.forEach(
           (btn) => {
 
@@ -612,10 +589,8 @@ form.addEventListener(
       statusText.textContent =
         "❌ Bitte wähle ein Datum aus.";
 
-
       statusText.style.color =
         "#ef4444";
-
 
       return;
     }
@@ -626,10 +601,8 @@ form.addEventListener(
       statusText.textContent =
         "❌ Bitte wähle eine verfügbare Uhrzeit aus.";
 
-
       statusText.style.color =
         "#ef4444";
-
 
       return;
     }
@@ -657,8 +630,28 @@ form.addEventListener(
       || "Keine Nachricht";
 
 
+    // ====================================
+    // EINDEUTIGE BUCHUNGS-ID
+    // ====================================
+
+    const bookingId =
+      crypto.randomUUID();
+
+
+    // ====================================
+    // AKZEPTIEREN / ABLEHNEN LINKS
+    // ====================================
+
+    const acceptUrl =
+      `${GOOGLE_CALENDAR_URL}?action=accept&id=${encodeURIComponent(bookingId)}`;
+
+
+    const rejectUrl =
+      `${GOOGLE_CALENDAR_URL}?action=reject&id=${encodeURIComponent(bookingId)}`;
+
+
     statusText.textContent =
-      "Termin wird gebucht...";
+      "Terminanfrage wird gesendet...";
 
 
     statusText.style.color =
@@ -670,8 +663,12 @@ form.addEventListener(
 
 
     sendenButton.textContent =
-      "Wird gebucht...";
+      "Wird gesendet...";
 
+
+    // ====================================
+    // EMAILJS DATEN
+    // ====================================
 
     const templateParams = {
 
@@ -691,12 +688,28 @@ form.addEventListener(
         uhrzeitInput.value,
 
       nachricht:
-        nachricht
+        nachricht,
+
+      booking_id:
+        bookingId,
+
+      accept_url:
+        acceptUrl,
+
+      reject_url:
+        rejectUrl
 
     };
 
 
-    const kalenderDaten = {
+    // ====================================
+    // DATEN FÜR GOOGLE APPS SCRIPT
+    // ====================================
+
+    const anfrageDaten = {
+
+      id:
+        bookingId,
 
       name:
         name,
@@ -720,7 +733,8 @@ form.addEventListener(
 
 
       // ==================================
-      // GOOGLE KALENDER
+      // 1. ANFRAGE BEI GOOGLE SPEICHERN
+      //    NOCH KEIN KALENDEREINTRAG!
       // ==================================
 
       await fetch(
@@ -742,7 +756,7 @@ form.addEventListener(
 
           body:
             JSON.stringify(
-              kalenderDaten
+              anfrageDaten
             )
 
         }
@@ -750,7 +764,7 @@ form.addEventListener(
 
 
       // ==================================
-      // EMAILJS
+      // 2. EMAIL MIT ACCEPT / REJECT SENDEN
       // ==================================
 
       await emailjs.send(
@@ -760,8 +774,12 @@ form.addEventListener(
       );
 
 
+      // ==================================
+      // ERFOLGREICH
+      // ==================================
+
       statusText.textContent =
-        "✅ Termin wurde erfolgreich gebucht.";
+        "✅ Deine Terminanfrage wurde erfolgreich gesendet.";
 
 
       statusText.style.color =
@@ -771,7 +789,6 @@ form.addEventListener(
       form.reset();
 
 
-      // Datum zurücksetzen
       document
         .querySelectorAll(
           ".calendar-day"
@@ -797,7 +814,6 @@ form.addEventListener(
         "Noch kein Datum gewählt";
 
 
-      // Uhrzeiten zurücksetzen
       resetTimeButtons();
 
 
@@ -805,13 +821,13 @@ form.addEventListener(
 
 
       console.error(
-        "Fehler bei Terminbuchung:",
+        "Fehler bei Terminanfrage:",
         error
       );
 
 
       statusText.textContent =
-        "❌ Termin konnte nicht gebucht werden.";
+        "❌ Terminanfrage konnte nicht gesendet werden.";
 
 
       statusText.style.color =
