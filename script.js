@@ -341,17 +341,4 @@ form.addEventListener("submit", async (event) => {
 
 
 
-fetch("https://script.google.com/macros/s/AKfycbwSB8OuE0Ovm3MbQXxa5vmS_cAe-2H-Sz7U7-eOR5myqyRbtFD9hQsX4UOg4FpjLdEFcA/exec", {
-  method: "POST",
-  mode: "no-cors",
-  headers: {
-    "Content-Type": "text/plain;charset=utf-8"
-  },
-  body: JSON.stringify({
-    name: "Verbindungstest",
-    email: "test@test.de",
-    datum: "2026-08-20",
-    uhrzeit: "15:00",
-    nachricht: "Test von GitHub Pages"
-  })
-});
+
