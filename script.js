@@ -1,7 +1,9 @@
 const SERVICE_ID = "service_f0cj3ma";
 const TEMPLATE_ID = "template_fn6162c";
 const PUBLIC_KEY = "cGaK4PxeTXRhKD-FB";
-const GOOGLE_CALENDAR_URL = "https://script.google.com/macros/s/AKfycbwSB8OuE0Ovm3MbQXxa5vmS_cAe-2H-Sz7U7-eOR5myqyRbtFD9hQsX4UOg4FpjLdEFcA/exec";
+
+const GOOGLE_CALENDAR_URL =
+  "https://script.google.com/macros/s/AKfycbwSB8OuE0Ovm3MbQXxa5vmS_cAe-2H-Sz7U7-eOR5myqyRbtFD9hQsX4UOg4FpjLdEFcA/exec";
 
 emailjs.init({
   publicKey: PUBLIC_KEY
@@ -49,7 +51,8 @@ function renderCalendar() {
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
 
-  calendarTitle.textContent = `${monthNames[month]} ${year}`;
+  calendarTitle.textContent =
+    `${monthNames[month]} ${year}`;
 
   const firstDay = new Date(year, month, 1);
 
@@ -90,7 +93,7 @@ function renderCalendar() {
     } else {
       dayElement.addEventListener("click", () => {
 
-        // Wenn derselbe Tag nochmal geklickt wird → abwählen
+        // Gleiches Datum erneut anklicken = abwählen
         if (dayElement.classList.contains("selected")) {
           dayElement.classList.remove("selected");
 
@@ -103,14 +106,12 @@ function renderCalendar() {
           return;
         }
 
-        // Andere Auswahl entfernen
         document
           .querySelectorAll(".calendar-day")
           .forEach((element) => {
             element.classList.remove("selected");
           });
 
-        // Neuen Tag auswählen
         dayElement.classList.add("selected");
 
         selectedDate = thisDate;
@@ -134,6 +135,8 @@ function renderCalendar() {
   }
 }
 
+
+// Vorheriger Monat
 prevMonthButton.addEventListener("click", () => {
   calendarDate.setMonth(
     calendarDate.getMonth() - 1
@@ -142,6 +145,8 @@ prevMonthButton.addEventListener("click", () => {
   renderCalendar();
 });
 
+
+// Nächster Monat
 nextMonthButton.addEventListener("click", () => {
   calendarDate.setMonth(
     calendarDate.getMonth() + 1
@@ -150,12 +155,15 @@ nextMonthButton.addEventListener("click", () => {
   renderCalendar();
 });
 
+
 renderCalendar();
 
+
+// UHRZEIT AUSWÄHLEN
 timeButtons.forEach((button) => {
   button.addEventListener("click", () => {
 
-    // Wenn dieselbe Uhrzeit nochmal geklickt wird → abwählen
+    // Gleiche Uhrzeit erneut anklicken = abwählen
     if (button.classList.contains("selected")) {
       button.classList.remove("selected");
 
@@ -167,21 +175,22 @@ timeButtons.forEach((button) => {
       return;
     }
 
-    // Andere Uhrzeit abwählen
     timeButtons.forEach((btn) => {
       btn.classList.remove("selected");
     });
 
-    // Neue Uhrzeit auswählen
     button.classList.add("selected");
 
-    uhrzeitInput.value = button.dataset.time;
+    uhrzeitInput.value =
+      button.dataset.time;
 
     summaryTime.textContent =
       `${button.dataset.time} Uhr`;
   });
 });
 
+
+// FORMULAR ABSENDEN
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -190,7 +199,6 @@ form.addEventListener("submit", async (event) => {
       "❌ Bitte wähle ein Datum aus.";
 
     statusText.style.color = "#ef4444";
-
     return;
   }
 
@@ -199,91 +207,93 @@ form.addEventListener("submit", async (event) => {
       "❌ Bitte wähle eine Uhrzeit aus.";
 
     statusText.style.color = "#ef4444";
-
     return;
   }
 
   statusText.textContent =
-    "Termin wird gesendet...";
+    "Termin wird gebucht...";
 
   statusText.style.color = "#94a3b8";
 
   sendenButton.disabled = true;
   sendenButton.textContent =
-    "Wird gesendet...";
+    "Wird gebucht...";
 
+
+  // Daten einmal auslesen
+  const name =
+    document.getElementById("name").value.trim();
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const nachricht =
+    document.getElementById("nachricht").value.trim()
+    || "Keine Nachricht";
+
+
+  // EMAILJS DATEN
   const templateParams = {
     to_email: "ramishsamadi123@gmail.com",
-
-    name:
-      document
-        .getElementById("name")
-        .value
-        .trim(),
-
-    email:
-      document
-        .getElementById("email")
-        .value
-        .trim(),
-
-    datum:
-      datumInput.value,
-
-    uhrzeit:
-      uhrzeitInput.value,
-
-    nachricht:
-      document
-        .getElementById("nachricht")
-        .value
-        .trim()
-        || "Keine Nachricht"
-  };
-
-try {
-
-  // E-Mail senden
-  await emailjs.send(
-    SERVICE_ID,
-    TEMPLATE_ID,
-    templateParams
-  );
-
-  // Termin an Google Kalender senden
-  const kalenderDaten = {
-    name: document.getElementById("name").value.trim(),
-    email: document.getElementById("email").value.trim(),
+    name: name,
+    email: email,
     datum: datumInput.value,
     uhrzeit: uhrzeitInput.value,
-    nachricht:
-      document.getElementById("nachricht").value.trim()
-      || "Keine Nachricht"
+    nachricht: nachricht
   };
 
-  await fetch(GOOGLE_CALENDAR_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(kalenderDaten)
-  });
 
-  statusText.textContent =
-    "✅ Termin wurde erfolgreich gebucht.";
+  // GOOGLE KALENDER DATEN
+  const kalenderDaten = {
+    name: name,
+    email: email,
+    datum: datumInput.value,
+    uhrzeit: uhrzeitInput.value,
+    nachricht: nachricht
+  };
+
+
+  try {
+
+    // 1. E-Mail senden
+    await emailjs.send(
+      SERVICE_ID,
+      TEMPLATE_ID,
+      templateParams
+    );
+
+
+    // 2. Google Kalender
+    await fetch(GOOGLE_CALENDAR_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(kalenderDaten)
+    });
+
+
+    statusText.textContent =
+      "✅ Termin wurde erfolgreich gebucht.";
 
     statusText.style.color =
       "#22c55e";
 
+
+    // Formular zurücksetzen
     form.reset();
 
+
+    // Uhrzeit zurücksetzen
     timeButtons.forEach((btn) => {
       btn.classList.remove("selected");
     });
 
     uhrzeitInput.value = "";
 
+
+    // Datum zurücksetzen
     document
       .querySelectorAll(".calendar-day")
       .forEach((day) => {
@@ -293,25 +303,30 @@ try {
     datumInput.value = "";
     selectedDate = null;
 
+
+    // Zusammenfassung zurücksetzen
     summaryDate.textContent =
       "Noch kein Datum gewählt";
 
     summaryTime.textContent =
       "Noch keine Uhrzeit gewählt";
 
+
   } catch (error) {
+
     console.error(
-      "EmailJS-Fehler:",
+      "Fehler bei Terminbuchung:",
       error
     );
 
     statusText.textContent =
-      "❌ Termin konnte nicht gesendet werden.";
+      "❌ Termin konnte nicht gebucht werden.";
 
     statusText.style.color =
       "#ef4444";
 
   } finally {
+
     sendenButton.disabled = false;
 
     sendenButton.textContent =
