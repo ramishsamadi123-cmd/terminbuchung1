@@ -156,6 +156,24 @@ renderCalendar();
 
 const uhrzeitInput =
   document.getElementById("uhrzeit");
+const timeButtons =
+  document.querySelectorAll(".time-btn");
+
+timeButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    timeButtons.forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+
+    uhrzeitInput.value =
+      button.dataset.time;
+  });
+
+});
 
 
 // VERGANGENE TAGE SPERREN
@@ -256,6 +274,11 @@ form.addEventListener("submit", async (event) => {
     // FORMULAR LEEREN
 
     form.reset();
+    timeButtons.forEach((btn) => {
+  btn.classList.remove("selected");
+});
+
+uhrzeitInput.value = "";
 
 
     // DATUMSGRENZE ERNEUT SETZEN
