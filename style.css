@@ -370,3 +370,48 @@ button:disabled {
 .time-title {
   margin-top: 25px !important;
 }
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.time-btn {
+  margin: 0;
+  padding: 12px 6px;
+
+  border: 1px solid #334155;
+  border-radius: 12px;
+
+  background: #111827;
+  color: #e2e8f0;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow: none;
+
+  transition: 0.2s;
+}
+
+.time-btn:hover {
+  background: #1e293b;
+  border-color: #6366f1;
+  transform: none;
+  box-shadow: none;
+}
+
+.time-btn.selected {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-color: #8b5cf6;
+  color: white;
+
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+}
+
+@media (max-width: 480px) {
+  .time-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
