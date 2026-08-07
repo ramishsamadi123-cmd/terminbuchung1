@@ -9,11 +9,37 @@ const statusText = document.getElementById("status");
 const sendenButton = document.getElementById("sendenButton");
 const datumInput = document.getElementById("datum");
 
+const timeButtons = document.querySelectorAll(".time-btn");
+const uhrzeitInput = document.getElementById("uhrzeit");
+
 // Vergangene Tage können nicht ausgewählt werden.
 datumInput.min = new Date().toISOString().split("T")[0];
 
+// Uhrzeit auswählen
+timeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    // Alte Auswahl entfernen
+    timeButtons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    // Neue Uhrzeit markieren
+    button.classList.add("active");
+
+    // Uhrzeit im versteckten Feld speichern
+    uhrzeitInput.value = button.dataset.time;
+  });
+});
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  // Prüfen, ob eine Uhrzeit ausgewählt wurde
+  if (!uhrzeitInput.value) {
+    statusText.textContent = "❌ Bitte wähle eine Uhrzeit aus.";
+    statusText.style.color = "#b91c1c";
+    return;
+  }
 
   statusText.textContent = "Termin wird gesendet...";
   statusText.style.color = "#334155";
@@ -24,18 +50,30 @@ form.addEventListener("submit", async (event) => {
     name: document.getElementById("name").value.trim(),
     email: document.getElementById("email").value.trim(),
     datum: document.getElementById("datum").value,
-    uhrzeit: document.getElementById("uhrzeit").value,
-    nachricht: document.getElementById("nachricht").value.trim() || "Keine Nachricht"
+    uhrzeit: uhrzeitInput.value,
+    nachricht:
+      document.getElementById("nachricht").value.trim() || "Keine Nachricht"
   };
 
   try {
     await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+
     statusText.textContent = "✅ Termin wurde erfolgreich gesendet.";
     statusText.style.color = "#15803d";
+
     form.reset();
+
+    // Markierung der Uhrzeit wieder entfernen
+    timeButtons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    uhrzeitInput.value = "";
+
     datumInput.min = new Date().toISOString().split("T")[0];
   } catch (error) {
     console.error("EmailJS-Fehler:", error);
+
     statusText.textContent = "❌ Termin konnte nicht gesendet werden.";
     statusText.style.color = "#b91c1c";
   } finally {
