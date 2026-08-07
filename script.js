@@ -20,6 +20,8 @@ const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 
 const timeButtons = document.querySelectorAll(".time-btn");
+const summaryDate = document.getElementById("summaryDate");
+const summaryTime = document.getElementById("summaryTime");
 
 let calendarDate = new Date();
 let selectedDate = null;
@@ -99,6 +101,13 @@ function renderCalendar() {
           `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
         datumInput.value = formattedDate;
+        summaryDate.textContent =
+  thisDate.toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric"
+  });
       });
     }
 
@@ -133,6 +142,8 @@ timeButtons.forEach((button) => {
     button.classList.add("selected");
 
     uhrzeitInput.value = button.dataset.time;
+    summaryTime.textContent =
+  `${button.dataset.time} Uhr`;
   });
 });
 
