@@ -20,6 +20,7 @@ const prevMonthButton = document.getElementById("prevMonth");
 const nextMonthButton = document.getElementById("nextMonth");
 
 const timeButtons = document.querySelectorAll(".time-btn");
+
 const summaryDate = document.getElementById("summaryDate");
 const summaryTime = document.getElementById("summaryTime");
 
@@ -101,13 +102,14 @@ function renderCalendar() {
           `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
         datumInput.value = formattedDate;
+
         summaryDate.textContent =
-  thisDate.toLocaleDateString("de-DE", {
-    weekday: "long",
-    day: "2-digit",
-    month: "long",
-    year: "numeric"
-  });
+          thisDate.toLocaleDateString("de-DE", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+          });
       });
     }
 
@@ -142,8 +144,9 @@ timeButtons.forEach((button) => {
     button.classList.add("selected");
 
     uhrzeitInput.value = button.dataset.time;
+
     summaryTime.textContent =
-  `${button.dataset.time} Uhr`;
+      `${button.dataset.time} Uhr`;
   });
 });
 
@@ -224,6 +227,12 @@ form.addEventListener("submit", async (event) => {
 
     datumInput.value = "";
     selectedDate = null;
+
+    summaryDate.textContent =
+      "Noch kein Datum gewählt";
+
+    summaryTime.textContent =
+      "Noch keine Uhrzeit gewählt";
 
   } catch (error) {
     console.error("EmailJS-Fehler:", error);
