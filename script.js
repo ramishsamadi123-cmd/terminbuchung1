@@ -93,7 +93,7 @@ function renderCalendar() {
     } else {
       dayElement.addEventListener("click", () => {
 
-        // Gleiches Datum erneut anklicken = abwählen
+        // Gleichen Tag noch einmal anklicken = abwählen
         if (dayElement.classList.contains("selected")) {
           dayElement.classList.remove("selected");
 
@@ -106,6 +106,7 @@ function renderCalendar() {
           return;
         }
 
+        // Andere Datumsauswahl entfernen
         document
           .querySelectorAll(".calendar-day")
           .forEach((element) => {
@@ -159,11 +160,14 @@ nextMonthButton.addEventListener("click", () => {
 renderCalendar();
 
 
-// UHRZEIT AUSWÄHLEN
+// ========================
+// UHRZEIT
+// ========================
+
 timeButtons.forEach((button) => {
   button.addEventListener("click", () => {
 
-    // Gleiche Uhrzeit erneut anklicken = abwählen
+    // Gleiche Uhrzeit noch einmal anklicken = abwählen
     if (button.classList.contains("selected")) {
       button.classList.remove("selected");
 
@@ -190,7 +194,10 @@ timeButtons.forEach((button) => {
 });
 
 
+// ========================
 // FORMULAR ABSENDEN
+// ========================
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -210,17 +217,6 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  statusText.textContent =
-    "Termin wird gebucht...";
-
-  statusText.style.color = "#94a3b8";
-
-  sendenButton.disabled = true;
-  sendenButton.textContent =
-    "Wird gebucht...";
-
-
-  // Daten einmal auslesen
   const name =
     document.getElementById("name").value.trim();
 
@@ -231,8 +227,17 @@ form.addEventListener("submit", async (event) => {
     document.getElementById("nachricht").value.trim()
     || "Keine Nachricht";
 
+  statusText.textContent =
+    "Termin wird gebucht...";
 
-  // EMAILJS DATEN
+  statusText.style.color = "#94a3b8";
+
+  sendenButton.disabled = true;
+  sendenButton.textContent =
+    "Wird gebucht...";
+
+
+  // Daten für EmailJS
   const templateParams = {
     to_email: "ramishsamadi123@gmail.com",
     name: name,
@@ -243,7 +248,7 @@ form.addEventListener("submit", async (event) => {
   };
 
 
-  // GOOGLE KALENDER DATEN
+  // Daten für Google Kalender
   const kalenderDaten = {
     name: name,
     email: email,
@@ -263,7 +268,7 @@ form.addEventListener("submit", async (event) => {
     );
 
 
-    // 2. Google Kalender
+    // 2. Termin an Google Apps Script senden
     await fetch(GOOGLE_CALENDAR_URL, {
       method: "POST",
       mode: "no-cors",
