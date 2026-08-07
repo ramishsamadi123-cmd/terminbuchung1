@@ -1,6 +1,7 @@
 const SERVICE_ID = "service_f0cj3ma";
 const TEMPLATE_ID = "template_fn6162c";
 const PUBLIC_KEY = "cGaK4PxeTXRhKD-FB";
+const GOOGLE_CALENDAR_URL = "https://script.google.com/macros/s/AKfycbwSB8OuE0Ovm3MbQXxa5vmS_cAe-2H-Sz7U7-eOR5myqyRbtFD9hQsX4UOg4FpjLdEFcA/exec";
 
 emailjs.init({
   publicKey: PUBLIC_KEY
@@ -240,15 +241,37 @@ form.addEventListener("submit", async (event) => {
         || "Keine Nachricht"
   };
 
-  try {
-    await emailjs.send(
-      SERVICE_ID,
-      TEMPLATE_ID,
-      templateParams
-    );
+try {
 
-    statusText.textContent =
-      "✅ Termin wurde erfolgreich gebucht.";
+  // E-Mail senden
+  await emailjs.send(
+    SERVICE_ID,
+    TEMPLATE_ID,
+    templateParams
+  );
+
+  // Termin an Google Kalender senden
+  const kalenderDaten = {
+    name: document.getElementById("name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    datum: datumInput.value,
+    uhrzeit: uhrzeitInput.value,
+    nachricht:
+      document.getElementById("nachricht").value.trim()
+      || "Keine Nachricht"
+  };
+
+  await fetch(GOOGLE_CALENDAR_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(kalenderDaten)
+  });
+
+  statusText.textContent =
+    "✅ Termin wurde erfolgreich gebucht.";
 
     statusText.style.color =
       "#22c55e";
