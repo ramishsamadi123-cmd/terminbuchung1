@@ -9,69 +9,137 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Termin mit Ramish</title>
+  <title>Termin buchen</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
   <main class="card">
 
-  <div class="booking-hero">
+    <!-- ========================= -->
+    <!-- OBERER HEADER -->
+    <!-- ========================= -->
 
-  <div class="booking-hero-text">
-    <span class="booking-label">TERMINPLANUNG</span>
+    <div class="booking-hero">
 
-    <h1>Termin buchen</h1>
+      <div class="booking-hero-text">
 
-    <p>
-      Wähle deinen gewünschten Termin
-      schnell und unkompliziert.
-    </p>
-  </div>
+        <span class="booking-label">
+          TERMINPLANUNG
+        </span>
 
-  <div class="booking-hero-icon">
-    <span>📅</span>
-  </div>
+        <h1>
+          Termin buchen
+        </h1>
 
-</div>
+        <p>
+          Wähle deinen gewünschten Termin
+          schnell und unkompliziert.
+        </p>
 
-<div class="hero-divider"></div>
+      </div>
 
+      <div class="booking-hero-icon">
+        <span>📅</span>
+      </div>
+
+    </div>
+
+    <div class="hero-divider"></div>
+
+
+    <!-- ========================= -->
+    <!-- FORMULAR -->
+    <!-- ========================= -->
 
     <form id="terminForm">
 
-      <h2>
-  <span class="step-number">1</span>
-  Leistung wählen
-</h2>
-
-<div class="input-group service-group">
-  <label for="leistung">Leistung</label>
-
-  <select id="leistung" required>
-    <option value="" selected disabled>
-      Bitte Leistung auswählen
-    </option>
-
-    <option value="Verwaltung">Verwaltung</option>
-    <option value="Kino">Kino</option>
-    <option value="Sport / Fußball">Sport / Fußball</option>
-    <option value="Freunde">Freunde</option>
-    <option value="Schwimmen">Schwimmen</option>
-    <option value="Beratung">Beratung</option>
-    <option value="Besprechung">Besprechung</option>
-    <option value="Lernen / Nachhilfe">Lernen / Nachhilfe</option>
-    <option value="Freizeit">Freizeit</option>
-    <option value="Sonstiges">Sonstiges</option>
-  </select>
-</div>
 
       <!-- ========================= -->
-      <!-- 1. DATUM -->
+      <!-- 1. LEISTUNG -->
+      <!-- ========================= -->
+
+      <div class="service-section">
+
+        <h2>
+          <span class="step-number">1</span>
+          Leistung wählen
+        </h2>
+
+        <div class="input-group">
+
+          <label for="leistung">
+            Leistung
+          </label>
+
+          <select
+            id="leistung"
+            required
+          >
+
+            <option value="">
+              Bitte auswählen
+            </option>
+
+            <option value="Verwaltung">
+              Verwaltung
+            </option>
+
+            <option value="Kino">
+              Kino
+            </option>
+
+            <option value="Sport / Fußball">
+              Sport / Fußball
+            </option>
+
+            <option value="Freunde">
+              Freunde
+            </option>
+
+            <option value="Schwimmen">
+              Schwimmen
+            </option>
+
+            <option value="Beratung">
+              Beratung
+            </option>
+
+            <option value="Besprechung">
+              Besprechung
+            </option>
+
+            <option value="Lernen / Nachhilfe">
+              Lernen / Nachhilfe
+            </option>
+
+            <option value="Freizeit">
+              Freizeit
+            </option>
+
+            <option value="Spazieren">
+              Spazieren
+            </option>
+
+            <option value="Essen / Restaurant">
+              Essen / Restaurant
+            </option>
+
+            <option value="Sonstiges">
+              Sonstiges
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================= -->
+      <!-- 2. DATUM -->
       <!-- ========================= -->
 
       <div class="termin-bereich">
@@ -126,7 +194,6 @@
         </div>
 
 
-        <!-- Ausgewähltes Datum wird hier gespeichert -->
         <input
           type="hidden"
           id="datum"
@@ -135,7 +202,7 @@
 
 
         <!-- ========================= -->
-        <!-- 2. UHRZEIT -->
+        <!-- 3. UHRZEIT -->
         <!-- ========================= -->
 
         <h2 class="time-title">
@@ -168,27 +235,49 @@
         </div>
 
 
-        <!-- Ausgewählte Uhrzeit -->
         <input
           type="hidden"
           id="uhrzeit"
           required
         >
-        <div class="termin-summary" id="terminSummary">
-  <div class="summary-icon">📅</div>
 
-  <div class="summary-text">
-    <strong>Dein Termin</strong>
-    <span id="summaryDate">Noch kein Datum gewählt</span>
-    <span id="summaryTime">Noch keine Uhrzeit gewählt</span>
-  </div>
-</div>
+
+        <!-- ========================= -->
+        <!-- TERMIN-ZUSAMMENFASSUNG -->
+        <!-- ========================= -->
+
+        <div
+          class="termin-summary"
+          id="terminSummary"
+        >
+
+          <div class="summary-icon">
+            📅
+          </div>
+
+          <div class="summary-text">
+
+            <strong>
+              Dein Termin
+            </strong>
+
+            <span id="summaryDate">
+              Noch kein Datum gewählt
+            </span>
+
+            <span id="summaryTime">
+              Noch keine Uhrzeit gewählt
+            </span>
+
+          </div>
+
+        </div>
 
       </div>
 
 
       <!-- ========================= -->
-      <!-- 3. DEINE DATEN -->
+      <!-- 4. DEINE DATEN -->
       <!-- ========================= -->
 
       <div class="daten-bereich">
@@ -256,7 +345,7 @@
 
 
       <!-- ========================= -->
-      <!-- TERMIN SENDEN -->
+      <!-- SENDEN -->
       <!-- ========================= -->
 
       <button
@@ -281,6 +370,7 @@
   <script
     src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
   </script>
+
 
   <!-- DEIN JAVASCRIPT -->
   <script src="script.js"></script>
