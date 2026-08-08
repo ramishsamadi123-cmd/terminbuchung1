@@ -521,3 +521,39 @@ button:disabled {
   transform: none;
   box-shadow: none;
 }
+.service-group {
+  margin-bottom: 35px;
+}
+
+#leistung {
+  width: 100%;
+  padding: 15px 16px;
+
+  background: #0f172a;
+  color: #ffffff;
+
+  border: 1px solid #334155;
+  border-radius: 10px;
+
+  font-size: 16px;
+  font-family: inherit;
+
+  outline: none;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+#leistung:hover {
+  border-color: #475569;
+}
+
+#leistung:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+#leistung option {
+  background: #0f172a;
+  color: #ffffff;
+}
