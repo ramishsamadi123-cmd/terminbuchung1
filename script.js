@@ -342,7 +342,6 @@ function renderCalendar() {
         async () => {
 
 
-          // Gleichen Tag erneut anklicken
           if (
             dayElement.classList.contains(
               "selected"
@@ -584,6 +583,32 @@ form.addEventListener(
     event.preventDefault();
 
 
+    // ====================================
+    // LEISTUNG PRÜFEN
+    // ====================================
+
+    const leistung =
+      document
+        .getElementById("leistung")
+        .value;
+
+
+    if (!leistung) {
+
+      statusText.textContent =
+        "❌ Bitte wähle eine Leistung aus.";
+
+      statusText.style.color =
+        "#ef4444";
+
+      return;
+    }
+
+
+    // ====================================
+    // DATUM PRÜFEN
+    // ====================================
+
     if (!datumInput.value) {
 
       statusText.textContent =
@@ -595,6 +620,10 @@ form.addEventListener(
       return;
     }
 
+
+    // ====================================
+    // UHRZEIT PRÜFEN
+    // ====================================
 
     if (!uhrzeitInput.value) {
 
@@ -681,6 +710,9 @@ form.addEventListener(
       email:
         email,
 
+      leistung:
+        leistung,
+
       datum:
         datumInput.value,
 
@@ -717,6 +749,9 @@ form.addEventListener(
       email:
         email,
 
+      leistung:
+        leistung,
+
       datum:
         datumInput.value,
 
@@ -733,8 +768,7 @@ form.addEventListener(
 
 
       // ==================================
-      // 1. ANFRAGE BEI GOOGLE SPEICHERN
-      //    NOCH KEIN KALENDEREINTRAG!
+      // ANFRAGE BEI GOOGLE SPEICHERN
       // ==================================
 
       await fetch(
@@ -764,7 +798,7 @@ form.addEventListener(
 
 
       // ==================================
-      // 2. EMAIL MIT ACCEPT / REJECT SENDEN
+      // EMAILJS SENDEN
       // ==================================
 
       await emailjs.send(
@@ -773,10 +807,6 @@ form.addEventListener(
         templateParams
       );
 
-
-      // ==================================
-      // ERFOLGREICH
-      // ==================================
 
       statusText.textContent =
         "✅ Deine Terminanfrage wurde erfolgreich gesendet.";
